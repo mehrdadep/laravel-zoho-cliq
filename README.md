@@ -1,29 +1,14 @@
-Please see [this repo](https://github.com/laravel-notification-channels/channels) for instructions on how to submit a channel proposal.
+# Zoho Cliq Notifications Channel for Laravel
 
-# A Boilerplate repo for contributions
-
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/laravel-notification-channels/:package_name.svg?style=flat-square)](https://packagist.org/packages/laravel-notification-channels/:package_name)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/laravel-notification-channels/:package_name.svg?style=flat-square)](https://packagist.org/packages/mehrdadep/laravel-zoho-cliq)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
-[![Build Status](https://img.shields.io/travis/laravel-notification-channels/:package_name/master.svg?style=flat-square)](https://travis-ci.org/laravel-notification-channels/:package_name)
-[![StyleCI](https://styleci.io/repos/:style_ci_id/shield)](https://styleci.io/repos/:style_ci_id)
-[![SensioLabsInsight](https://img.shields.io/sensiolabs/i/:sensio_labs_id.svg?style=flat-square)](https://insight.sensiolabs.com/projects/:sensio_labs_id)
-[![Quality Score](https://img.shields.io/scrutinizer/g/laravel-notification-channels/:package_name.svg?style=flat-square)](https://scrutinizer-ci.com/g/laravel-notification-channels/:package_name)
-[![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/laravel-notification-channels/:package_name/master.svg?style=flat-square)](https://scrutinizer-ci.com/g/laravel-notification-channels/:package_name/?branch=master)
-[![Total Downloads](https://img.shields.io/packagist/dt/laravel-notification-channels/:package_name.svg?style=flat-square)](https://packagist.org/packages/laravel-notification-channels/:package_name)
 
-This package makes it easy to send notifications using [:service_name](link to service) with Laravel 5.5+, 6.x and 7.x
-
-**Note:** Replace ```:channel_namespace``` ```:service_name``` ```:author_name``` ```:author_username``` ```:author_website``` ```:author_email``` ```:package_name``` ```:package_description``` ```:style_ci_id``` ```:sensio_labs_id``` with their correct values in [README.md](README.md), [CHANGELOG.md](CHANGELOG.md), [CONTRIBUTING.md](CONTRIBUTING.md), [LICENSE.md](LICENSE.md), [composer.json](composer.json) and other files, then delete this line.
-**Tip:** Use "Find in Path/Files" in your code editor to find these keywords within the package directory and replace all occurences with your specified term.
-
-This is where your description should go. Add a little code example so build can understand real quick how the package can be used. Try and limit it to a paragraph or two.
-
-
+This package makes it easy to send notifications using [Zoho Cliq](https://www.zoho.com/nl/cliq/) with Laravel 5.5+, 6.x and 7.x
 
 ## Contents
 
 - [Installation](#installation)
-	- [Setting up the :service_name service](#setting-up-the-:service_name-service)
+	- [Setting up the Zoho Cliq service](#setting-up-the-zoho-cliq-service)
 - [Usage](#usage)
 	- [Available Message methods](#available-message-methods)
 - [Changelog](#changelog)
@@ -36,19 +21,98 @@ This is where your description should go. Add a little code example so build can
 
 ## Installation
 
-Please also include the steps for any third-party service setup that's required for this package.
+You can install the package via composer:
 
-### Setting up the :service_name service
+```
+composer require mehrdadep/laravel-zoho-cliq
+```
 
-Optionally include a few steps how users can set up the service.
+Next, if you're using Laravel without auto-discovery, add the service provider to config/app.php:
+
+```
+'providers' => [
+// ...
+NotificationChannels\ZohoCliq\ZohoCliqServiceProvider::class,
+],
+```
+
+### Setting up the Zoho Cliq service
+
+Create a [webhook token](https://cliq.zoho.com/integrations/webhook-tokens) and follow the guides from [here](https://www.zoho.com/cliq/help/restapi/v2/#Post_Message_Channel) to set up a bot or post to the channel directly with the user (e.g. `https://cliq.zoho.com/api/v2/channelsbyname/alerts/message?zapikey=2002.1c84cd1a2ffd304f57d44ecddc157d59.127g8g495367a04017a2d9af0bc5666f8&bot_unique_name=custombot`)
+Then, configure your webhook url:
+
+Add the following code to your `config/services.php`:
+
+```
+// config/services.php
+...
+'zoho_cliq' => [
+'webhook_url' => env('ZOHO_CLIQ_WEBHOOK_URL'),
+],
+...
+```
+
+You can also add multiple webhooks if you have multiple teams or channels, it's up to you.
+
+```
+// config/services.php
+...
+'zoho_cliq' => [
+    'sales_url' => env('ZOHO_CLIQ_SALES_WEBHOOK_URL'),
+    'dev_url' => env('ZOHO_CLIQ_DEV_WEBHOOK_URL'),
+],
+...
+```
 
 ## Usage
 
-Some code examples, make it clear how to use the package
+Now you can use the channel in your `via()` method inside the notification:
 
-### Available Message methods
+```
+use Illuminate\Notifications\Notification;
+use NotificationChannels\ZohoCliq\ZohoCliqChannel;
+use NotificationChannels\ZohoCliq\ZohoCliqMessage;
 
-A list of all available options
+class SubscriptionCreated extends Notification
+{
+public function via($notifiable)
+{
+return [ZohoCliqChannel::class];
+}
+
+    public function toZohoCliq($notifiable)
+    {
+        return ZohoCliqMessage::create()
+            ->to(config('services.microsoft_teams.sales_url'))
+            ->type('success')
+            ->title('Subscription Created')
+            ->content('Yey, you got a **new subscription**. Maybe you want to contact him if he needs any support?')
+            ->button('Check User', 'https://foo.bar/users/123');
+    }
+}
+```
+
+Instead of adding the `to($url)` method for the recipient you can also add the `routeNotificationForZohoCliq` method inside your Notifiable model. This method needs to return the webhook url.
+
+```
+public function routeNotificationForZohoCliq(Notification $notification)
+{
+   return config('services.microsoft_teams.sales_url')
+}
+```
+
+#### On-Demand Notification Usage
+To use on demand notifications you can use the route method on the Notification facade.
+
+```
+Notification::route(ZohoCliqChannel::class,null)
+->notify(new SubscriptionCreated());
+```
+
+## Available Message methods
+
+`to(string $webhookUrl)`: Recipient's webhook url.
+`payload(string $summary)`: Payload generated based on the [Zoho docs](https://www.zoho.com/cliq/help/restapi/v2/#Post_Message_Channel).
 
 ## Changelog
 
@@ -62,7 +126,7 @@ $ composer test
 
 ## Security
 
-If you discover any security related issues, please email :author_email instead of using the issue tracker.
+If you discover any security related issues, use the issues.
 
 ## Contributing
 
@@ -70,7 +134,7 @@ Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
 ## Credits
 
-- [:author_name](https://github.com/:author_username)
+- [:mehrdadep](https://github.com/mehrdadep)
 - [All Contributors](../../contributors)
 
 ## License
