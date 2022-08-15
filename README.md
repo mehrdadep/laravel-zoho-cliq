@@ -132,7 +132,7 @@ Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
 ## Credits
 
-- [:mehrdadep](https://github.com/mehrdadep)
+- [mehrdadep](https://github.com/mehrdadep)
 - [All Contributors](../../contributors)
 
 ## License
