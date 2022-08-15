@@ -1,6 +1,6 @@
 # Zoho Cliq Notifications Channel for Laravel
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/laravel-notification-channels/:package_name.svg?style=flat-square)](https://packagist.org/packages/mehrdadep/laravel-zoho-cliq)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/mehrdadep/laravel-zoho-cliq.svg?style=flat-square)](https://packagist.org/packages/mehrdadep/laravel-zoho-cliq)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 
 This package makes it easy to send notifications using [Zoho Cliq](https://www.zoho.com/nl/cliq/) with Laravel 5.5+, 6.x and 7.x
@@ -39,8 +39,9 @@ NotificationChannels\ZohoCliq\ZohoCliqServiceProvider::class,
 ### Setting up the Zoho Cliq service
 
 Create a [webhook token](https://cliq.zoho.com/integrations/webhook-tokens) and follow the guides from [here](https://www.zoho.com/cliq/help/restapi/v2/#Post_Message_Channel) to set up a bot or post to the channel directly with the user (e.g. `https://cliq.zoho.com/api/v2/channelsbyname/alerts/message?zapikey=2002.1c84cd1a2ffd304f57d44ecddc157d59.127g8g495367a04017a2d9af0bc5666f8&bot_unique_name=custombot`)
+  
 Then, configure your webhook url:
-
+  
 Add the following code to your `config/services.php`:
 
 ```
@@ -108,8 +109,8 @@ Notification::route(ZohoCliqChannel::class,null)
 
 ## Available Message methods
 
-`to(string $webhookUrl)`: Recipient's webhook url.
-`payload(string $summary)`: Payload generated based on the [Zoho docs](https://www.zoho.com/cliq/help/restapi/v2/#Post_Message_Channel).
+- `to(string $webhookUrl)`: Recipient's webhook url.
+- `payload(string $summary)`: Payload generated based on the [Zoho docs](https://www.zoho.com/cliq/help/restapi/v2/#Post_Message_Channel).
 
 ## Changelog
 
