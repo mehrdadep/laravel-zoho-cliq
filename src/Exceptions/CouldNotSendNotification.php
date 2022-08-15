@@ -3,6 +3,7 @@
 namespace NotificationChannels\ZohoCliq\Exceptions;
 
 use Exception;
+use GuzzleHttp\Exception\ClientException;
 
 class CouldNotSendNotification extends Exception
 {
@@ -13,7 +14,7 @@ class CouldNotSendNotification extends Exception
      *
      * @return static
      */
-    public static function ZohoCliqRespondedWithAnError(ClientException $exception)
+    public static function zohoCliqRespondedWithAnError(ClientException $exception)
     {
         if (! $exception->hasResponse()) {
             return new static('Zoho Cliq responded with an error but no response body found');

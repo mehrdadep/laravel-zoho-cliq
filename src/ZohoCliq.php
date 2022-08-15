@@ -42,9 +42,9 @@ class ZohoCliq
         }
 
         try {
-            $response = $this->httpClient->post($url, $data);
+            $response = $this->httpClient->post($url, ["json" => $data]);
         } catch (ClientException $exception) {
-            throw CouldNotSendNotification::ZohoCliqRespondedWithAnError($exception);
+            throw CouldNotSendNotification::zohoCliqRespondedWithAnError($exception);
         } catch (Exception $exception) {
             throw CouldNotSendNotification::couldNotCommunicateWithZohoCliq($exception);
         }
