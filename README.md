@@ -94,7 +94,7 @@ Instead of adding the `to($url)` method for the recipient you can also add the `
 ```
 public function routeNotificationForZohoCliq(Notification $notification)
 {
-   return config('services.microsoft_teams.sales_url')
+   return config('services.zoho_cliq.sales_url')
 }
 ```
 
