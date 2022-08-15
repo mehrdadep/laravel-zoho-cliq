@@ -30,10 +30,6 @@ class ZohoCliqServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        Notification::extend('teams', static function (Container $app) {
-            return $app->make(ZohoCliqChannel::class);
-        });
-
         Notification::extend('zohoCliq', static function (Container $app) {
             return $app->make(ZohoCliqChannel::class);
         });

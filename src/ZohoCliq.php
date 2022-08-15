@@ -26,7 +26,7 @@ class ZohoCliq
     }
 
     /**
-     * Send a message to a MicrosoftTeams channel.
+     * Send a message to a ZohoCliq channel.
      *
      * @param  string  $url
      * @param  array  $data
