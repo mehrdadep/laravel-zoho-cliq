@@ -83,11 +83,8 @@ return [ZohoCliqChannel::class];
     public function toZohoCliq($notifiable)
     {
         return ZohoCliqMessage::create()
-            ->to(config('services.microsoft_teams.sales_url'))
-            ->type('success')
-            ->title('Subscription Created')
-            ->content('Yey, you got a **new subscription**. Maybe you want to contact him if he needs any support?')
-            ->button('Check User', 'https://foo.bar/users/123');
+            ->to(config('services.zoho_cliq.sales_url'))
+            ->payload(["text" => "a sample message"]);
     }
 }
 ```

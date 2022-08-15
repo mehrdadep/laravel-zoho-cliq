@@ -24,6 +24,15 @@ class ZohoCliqMessage
     }
 
     /**
+     * @param  array  $payload
+     * @return self
+     */
+    public static function create(array $payload = []): self
+    {
+        return new self($payload);
+    }
+
+    /**
      * Set the payload.
      *
      * @param  array  $payload
